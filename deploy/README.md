@@ -2,7 +2,8 @@
 
 A PHP script to automatically pull from a repository to a web server (using a webhook on GitHub, GitLab, or Bitbucket).
 
-You can configure which branch this script pulls from. This script is useful for both development and production servers.
+You can configure which branch this script pulls from. This script is useful for both development and production
+servers.
 
 ---
 
@@ -18,9 +19,12 @@ Generate an SSH key and add it to your account so that `git pull` can be run wit
 
 ### Configuration
 
-Copy the __git-deploy__ folder and its contents in to your public folder (typically public_html). Note that you can change the name of the folder if desired.
+Copy the __git-deploy__ folder and its contents in to your public folder (typically public_html). Note that you can
+change the name of the folder if desired.
 
-Rename __git-deploy/deploy.sample.php__ to __git-deploy/deploy.php__, and update each variable to a value that suits your needs. Multiple copies of __git-deploy/deploy.sample.php__ can be made for multiple projects or versions (you just need to change the webhook url to match the new name). An example of a live configuration is below.
+Rename __git-deploy/deploy.sample.php__ to __git-deploy/deploy.php__, and update each variable to a value that suits
+your needs. Multiple copies of __git-deploy/deploy.sample.php__ can be made for multiple projects or versions (you just
+need to change the webhook url to match the new name). An example of a live configuration is below.
 
 ```PHP
 define("TOKEN", "secret-token");
@@ -33,9 +37,13 @@ define("MAX_EXECUTION_TIME", 180);
 define("BEFORE_PULL", "/usr/bin/git reset --hard @{u}");
 define("AFTER_PULL", "/usr/bin/node ./node_modules/gulp/bin/gulp.js default");
 ```
+
 ### Permissions
 
-When __deploy.php__ is called by the web-hook, the webserver user (`www`, `www-data`, `apache`, etc...) will attempt to run `git pull ...`. Since you probably cloned into the repository as yourself, and your user therefore owns it, the webserver user needs to be given write access. It is suggested this be accomplished by changing the repository group to the webserver user's and giving the group write permissions:
+When __deploy.php__ is called by the web-hook, the webserver user (`www`, `www-data`, `apache`, etc...) will attempt to
+run `git pull ...`. Since you probably cloned into the repository as yourself, and your user therefore owns it, the
+webserver user needs to be given write access. It is suggested this be accomplished by changing the repository group to
+the webserver user's and giving the group write permissions:
 
 1. Open a terminal to the directory containing the repository on the server.
 2. run `sudo chown -R $USER:webserverusername custom-project-repo-dir/.git/` to change the group of the repo.
@@ -67,7 +75,9 @@ In your repository, navigate to Settings &rarr; Integrations, and use the follow
 - URL: https://www.yoursite.com/git-deploy/deploy.php
 - Secret Token: The value of TOKEN in config.php
 - Trigger: :ballot_box_with_check: Push events
-- Enable SSL verification: :ballot_box_with_check: (only if using SSL, see [GitLab's documentation](https://gitlab.com/help/user/project/integrations/webhooks#ssl-verification) for more details)
+- Enable SSL verification: :ballot_box_with_check: (only if using SSL,
+  see [GitLab's documentation](https://gitlab.com/help/user/project/integrations/webhooks#ssl-verification) for more
+  details)
 
 Click "Add webhook" to save your settings, and the script should start working.
 
@@ -80,7 +90,9 @@ In your repository, navigate to Settings &rarr; Webhooks &rarr; Add webhook, and
 - Title: git-deploy
 - URL: https://www.yoursite.com/git-deploy/deploy.php?token=secret-token
 - Active: :ballot_box_with_check:
-- SSL / TLS: :white_large_square: Skip certificate verification (only if using SSL, see [Bitbucket's documentation](https://confluence.atlassian.com/bitbucket/manage-webhooks-735643732.html#ManageWebhooks-skip_certificate) for more details)
+- SSL / TLS: :white_large_square: Skip certificate verification (only if using SSL,
+  see [Bitbucket's documentation](https://confluence.atlassian.com/bitbucket/manage-webhooks-735643732.html#ManageWebhooks-skip_certificate)
+  for more details)
 - Triggers: :radio_button: Repository push
 
 Click "Save" to save your settings, and the script should start working.
@@ -89,13 +101,16 @@ Click "Save" to save your settings, and the script should start working.
 
 ## Integration with CI/CD
 
-If you'd prefer to integrate git-deploy with your CI scripts rather than using traditional Webhooks, you can trigger the hook via the following `wget` command.
+If you'd prefer to integrate git-deploy with your CI scripts rather than using traditional Webhooks, you can trigger the
+hook via the following `wget` command.
 
 ```sh
 wget --quiet --output-document=- --content-on-error --header="Content-Type: application/json" --post-data='{"ref":"refs/heads/master"}' 'https://www.example.com/git-deploy/deploy.php?token=secret-token'
 ```
 
-Additionally, you can add the parameters `sha=COMMIT_HASH` and `reset=true` to the URL in order to instruct git-deploy to reset to a specific commit. **Note that this will overwrite any local changes you may have made.** This can be useful for integration with things like [GitLab's Environments feature](https://gitlab.com/help/ci/environments).
+Additionally, you can add the parameters `sha=COMMIT_HASH` and `reset=true` to the URL in order to instruct git-deploy
+to reset to a specific commit. **Note that this will overwrite any local changes you may have made.** This can be useful
+for integration with things like [GitLab's Environments feature](https://gitlab.com/help/ci/environments).
 
 ---
 
