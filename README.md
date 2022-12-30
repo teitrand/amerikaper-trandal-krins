@@ -1,6 +1,4 @@
-# gitkrins
-
-Trandal krins
+# Trandal krins
 
 Dette er ein kopi av nettsida til Per Hauge (AmerikaPer) frå Tripod då dei har slutta å tilby gratis hosting.
 
